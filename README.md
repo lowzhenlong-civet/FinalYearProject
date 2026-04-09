@@ -5,3 +5,5 @@ This project is a web-based platform designed to reduce canteen congestion and s
 Users can browse menus, place orders in advance, and schedule pickup times to avoid long queues. At the same time, students can explore and apply for short-term job opportunities posted by canteen operators, helping them earn income and gain experience.
 
 The system improves service efficiency for merchants, enhances user convenience, and promotes a smarter, more productive campus environment.
+
+Noted: Before execute the project import the database sql to phpMyAdmin.
