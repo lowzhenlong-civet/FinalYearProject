@@ -1,0 +1,691 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Apr 09, 2026 at 09:02 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `tarumt_portal`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cart_items`
+--
+
+CREATE TABLE `cart_items` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `menu_item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `customization` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart_items`
+--
+
+INSERT INTO `cart_items` (`id`, `student_id`, `menu_item_id`, `quantity`, `created_at`, `customization`) VALUES
+(23, 16, 33, 100, '2026-03-16 16:53:31', NULL),
+(24, 16, 36, 1, '2026-03-16 16:53:40', 'No vegetable');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `discount_events`
+--
+
+CREATE TABLE `discount_events` (
+  `id` int(11) NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `discount_type` varchar(20) NOT NULL DEFAULT 'percent',
+  `discount_value` decimal(10,2) NOT NULL,
+  `min_order_amount` decimal(10,2) NOT NULL DEFAULT 100.00,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `discount_events`
+--
+
+INSERT INTO `discount_events` (`id`, `name`, `discount_type`, `discount_value`, `min_order_amount`, `is_active`, `created_at`) VALUES
+(2, 'Hari Raya Celebration', 'percent', 10.00, 50.00, 1, '2026-03-16 22:43:49'),
+(3, 'School Open Day Special Offer', 'fixed', 2.00, 10.00, 1, '2026-03-16 22:44:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_applications`
+--
+
+CREATE TABLE `job_applications` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `shifts_applied` text NOT NULL,
+  `status` enum('pending','accepted','rejected') DEFAULT 'pending',
+  `applied_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `job_application_status` varchar(20) NOT NULL DEFAULT 'pending' COMMENT 'pending, accepted, rejected',
+  `rejection_reason` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `job_applications`
+--
+
+INSERT INTO `job_applications` (`id`, `student_id`, `job_id`, `shifts_applied`, `status`, `applied_at`, `job_application_status`, `rejection_reason`) VALUES
+(4, 16, 12, '[\"Wednesday 12:00pm \\u2013 2:00pm\"]', 'pending', '2026-03-16 16:50:25', 'accepted', NULL),
+(6, 16, 14, '[\"Thursday 12:00pm \\u2013 2:00pm\"]', 'pending', '2026-03-17 02:34:54', 'rejected', 'sorry its full'),
+(7, 16, 15, '[\"Friday 11:30am \\u2013 1:30pm\"]', 'pending', '2026-03-17 02:52:43', 'rejected', 'sorry its full'),
+(8, 20, 13, '[\"Wednesday 11:30am \\u2013 1:30pm\"]', 'pending', '2026-03-17 05:07:57', 'pending', NULL),
+(9, 21, 12, '[\"Monday 12:00pm \\u2013 2:00pm\",\"Wednesday 12:00pm \\u2013 2:00pm\"]', 'pending', '2026-03-17 05:09:30', 'pending', NULL),
+(16, 16, 18, '[\"11:00 AM - 2:00 PM\"]', 'pending', '2026-04-01 01:10:00', 'accepted', NULL),
+(17, 20, 18, '[\"11:00 AM - 2:00 PM\"]', 'pending', '2026-04-02 02:10:00', 'pending', NULL),
+(18, 21, 18, '[\"11:00 AM - 2:00 PM\"]', 'pending', '2026-04-03 03:10:00', 'rejected', 'Interview slot full for this week.'),
+(19, 16, 19, '[\"11:00 AM - 2:00 PM\"]', 'pending', '2026-04-01 01:11:00', 'pending', NULL),
+(20, 20, 19, '[\"11:00 AM - 2:00 PM\"]', 'pending', '2026-04-02 02:11:00', 'rejected', 'Interview slot full for this week.'),
+(21, 21, 19, '[\"11:00 AM - 2:00 PM\"]', 'pending', '2026-04-03 03:11:00', 'accepted', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_postings`
+--
+
+CREATE TABLE `job_postings` (
+  `id` int(11) NOT NULL,
+  `merchant_id` int(11) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `description` text NOT NULL,
+  `wage` varchar(50) NOT NULL,
+  `location` varchar(255) NOT NULL,
+  `posted_date` date NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `job_post_status` varchar(20) NOT NULL DEFAULT 'pending' COMMENT 'pending, active, rejected, closed',
+  `rejection_reason` text DEFAULT NULL COMMENT 'Reason from admin when job is rejected; merchant sees this'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `job_postings`
+--
+
+INSERT INTO `job_postings` (`id`, `merchant_id`, `title`, `type`, `description`, `wage`, `location`, `posted_date`, `created_at`, `job_post_status`, `rejection_reason`) VALUES
+(12, 19, 'Cafeteria Assistant', 'Part-Time', 'Assist in preparing simple food and drinks, serve customers, handle basic cashier duties, and keep the cafeteria clean and organized.\n\nRequirements:\n• Friendly and polite with customers\n• Able to work during lunch hours\n• Responsible and punctual', '10.00', 'School Cafeteria – Block A', '2026-03-16', '2026-03-16 15:14:37', 'active', NULL),
+(13, 19, 'Fried Food Assistant', 'Part-Time', 'Assist in preparing fried chicken chop, pack food orders, and support the main cook during peak hours.\n\nRequirements:\n• Able to follow simple cooking instructions\n• Maintain food hygiene', '11.00', 'School Cafeteria – Block A', '2026-03-16', '2026-03-16 15:17:36', 'active', NULL),
+(14, 17, 'Noodle  Assistant', 'Part-Time', 'Help prepare noodle dishes, pass ingredients to the cook, serve food to customers, and maintain a clean workspace.\n\nRequirements:\n• Able to work quickly during busy hours\n• Responsible and hardworking', '11.00', 'TARUMT Canteen – Block L', '2026-03-16', '2026-03-16 15:19:52', 'active', NULL),
+(15, 17, 'Food Packing Assistant', 'Part-Time', 'Pack takeaway meals, arrange food containers, and help manage customer takeaway orders during lunch time.\n\nRequirements:\n• Good attention to detail\n• Able to work fast', '8', 'TARUMT Canteen – Block L', '2026-03-16', '2026-03-16 15:20:33', 'active', NULL),
+(18, 17, 'Part-time Canteen Crew #1', 'Part-Time', 'Assist during peak lunch hours.\nRequirements:\n• Friendly attitude\n• Basic cleanliness', '12.00', 'Campus Canteen A', '2026-04-02', '2026-04-08 08:52:38', 'active', NULL),
+(19, 19, 'Part-time Canteen Crew #2', 'Shift', 'Assist during peak lunch hours.\nRequirements:\n• Friendly attitude\n• Basic cleanliness', '11.50', 'Campus Canteen B', '2026-04-03', '2026-04-08 08:52:38', 'active', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_shifts`
+--
+
+CREATE TABLE `job_shifts` (
+  `id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `shift_description` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `job_shifts`
+--
+
+INSERT INTO `job_shifts` (`id`, `job_id`, `shift_description`) VALUES
+(15, 13, 'Wednesday 11:30am – 1:30pm'),
+(16, 13, 'Thursday 12:00pm – 2:00pm'),
+(17, 12, 'Monday 12:00pm – 2:00pm'),
+(18, 12, 'Wednesday 12:00pm – 2:00pm'),
+(19, 14, 'Thursday 12:00pm – 2:00pm'),
+(21, 15, 'Friday 11:30am – 1:30pm'),
+(24, 18, '11:00 AM - 2:00 PM'),
+(25, 19, '11:00 AM - 2:00 PM');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `menu_items`
+--
+
+CREATE TABLE `menu_items` (
+  `id` int(11) NOT NULL,
+  `merchant_id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `category` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `prep_time` int(11) NOT NULL,
+  `available` tinyint(1) DEFAULT 1,
+  `image` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `approval_status` varchar(20) DEFAULT 'active'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `menu_items`
+--
+
+INSERT INTO `menu_items` (`id`, `merchant_id`, `name`, `category`, `description`, `price`, `prep_time`, `available`, `image`, `created_at`, `approval_status`) VALUES
+(25, 19, 'Chicken Chop', 'Main', 'Fried chicken with potato and salad', 15.00, 20, 1, 'uploads/menu/merchant_19_69b81ba7af70c.jpg', '2026-03-06 14:23:23', 'active'),
+(27, 19, 'Spaghetti Bolognese', 'Pasta', 'Spaghetti with meat sauce', 15.00, 15, 0, 'uploads/menu/merchant_19_69b81c56b7a9e.jpg', '2026-03-06 14:23:23', 'active'),
+(28, 19, 'chicken Salad', 'Appetizer', 'Fresh salad with chicken and dressing', 9.00, 10, 1, 'uploads/menu/merchant_19_69b81b89237cd.jpg', '2026-03-06 14:23:23', 'active'),
+(29, 19, 'Orange Juice', 'Drink', 'Fresh orange juice', 8.00, 5, 1, 'uploads/menu/merchant_19_69b81be89b0d1.jpg', '2026-03-06 14:23:23', 'active'),
+(31, 17, 'Chicken Rice', 'Main', 'Steamed chicken with fragrant rice', 8.00, 10, 1, 'uploads/menu/merchant_17_69b818d0b3a36.jpg', '2026-03-06 14:28:31', 'active'),
+(32, 17, 'Curry Noodle', 'Main', 'Spicy curry with chicken, noodle and egg.', 9.50, 15, 1, 'uploads/menu/merchant_17_69b81911aa8e4.jpg', '2026-03-06 14:28:31', 'active'),
+(33, 17, 'Roti Canai', 'Breakfast', 'Flaky flatbread with curry', 2.50, 15, 1, 'uploads/menu/merchant_17_69b81898877a1.jpg', '2026-03-06 14:28:31', 'active'),
+(34, 17, 'Teh Tarik', 'Drink', 'Pulled milk tea', 3.50, 5, 0, 'uploads/menu/merchant_17_69b818abdaa1b.jpg', '2026-03-06 14:28:31', 'active'),
+(36, 17, 'Nasi Lemak', 'Main', 'Traditional Malaysian rice dish with sambal, egg and rice.', 12.00, 8, 1, 'uploads/menu/merchant_17_69b818532302d.jpg', '2026-03-16 14:48:51', 'active');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
+  `subject` varchar(200) DEFAULT NULL,
+  `body` text NOT NULL,
+  `related_job_id` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `read_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orders`
+--
+
+CREATE TABLE `orders` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `merchant_id` int(11) NOT NULL,
+  `order_number` varchar(20) NOT NULL,
+  `status` enum('pending','processing','ready','completed','cancelled') DEFAULT 'pending',
+  `total_amount` decimal(10,2) NOT NULL,
+  `ordered_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `pickup_time` datetime DEFAULT NULL,
+  `discount_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `discount_event_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`id`, `student_id`, `merchant_id`, `order_number`, `status`, `total_amount`, `ordered_at`, `pickup_time`, `discount_amount`, `discount_event_id`) VALUES
+(12, 16, 19, 'ORD20260316175041156', 'completed', 86.20, '2026-03-16 16:50:41', '2026-03-16 16:00:00', 11.80, 3),
+(13, 16, 17, 'ORD20260316175117120', 'completed', 8.00, '2026-03-16 16:51:17', '2026-03-16 09:30:00', 0.00, NULL),
+(14, 20, 19, 'ORD20260317060807663', 'completed', 8.00, '2026-03-17 05:08:07', '2026-03-17 13:30:00', 0.00, NULL),
+(15, 21, 17, 'ORD20260317060925269', 'completed', 54.25, '2026-03-17 05:09:25', '2026-03-17 15:30:00', 8.25, 3),
+(16, 21, 17, 'ORD20260317060948783', 'completed', 8.00, '2026-03-17 05:09:48', '2026-03-17 14:30:00', 0.00, NULL),
+(17, 20, 19, 'ORD20260317080132509', 'completed', 9.00, '2026-03-17 07:01:32', '2026-03-17 15:30:00', 0.00, NULL),
+(60, 21, 19, 'ORDSEED2026040109400', 'completed', 60.00, '2026-04-01 01:40:00', '2026-04-01 10:41:00', 0.00, NULL),
+(61, 20, 17, 'ORDSEED2026040114203', 'completed', 19.00, '2026-04-01 06:20:35', '2026-04-01 14:53:35', 0.00, NULL),
+(62, 21, 19, 'ORDSEED2026040115004', 'processing', 15.00, '2026-04-01 07:00:49', '2026-04-01 15:21:49', 0.00, NULL),
+(63, 20, 17, 'ORDSEED2026040112201', 'ready', 16.00, '2026-04-01 04:20:11', '2026-04-01 13:32:11', 0.00, NULL),
+(64, 21, 19, 'ORDSEED2026040112104', 'pending', 17.00, '2026-04-01 04:10:41', '2026-04-01 13:27:41', 0.00, NULL),
+(65, 16, 19, 'ORDSEED2026040111205', 'completed', 45.00, '2026-04-01 03:20:59', '2026-04-01 12:40:59', 0.00, NULL),
+(66, 21, 17, 'ORDSEED2026040217104', 'completed', 67.00, '2026-04-02 09:10:46', '2026-04-02 18:23:46', 0.00, NULL),
+(67, 20, 19, 'ORDSEED2026040213000', 'completed', 53.00, '2026-04-02 05:00:02', '2026-04-02 14:29:02', 0.00, NULL),
+(68, 16, 17, 'ORDSEED2026040215205', 'processing', 24.00, '2026-04-02 07:20:53', '2026-04-02 16:15:53', 0.00, NULL),
+(69, 16, 17, 'ORDSEED2026040211404', 'ready', 7.00, '2026-04-02 03:40:41', '2026-04-02 12:57:41', 0.00, NULL),
+(70, 16, 19, 'ORDSEED2026040211204', 'pending', 71.00, '2026-04-02 03:20:42', '2026-04-02 12:47:42', 0.00, NULL),
+(71, 20, 17, 'ORDSEED2026040213004', 'completed', 28.50, '2026-04-02 05:00:48', '2026-04-02 13:56:48', 0.00, NULL),
+(72, 16, 17, 'ORDSEED2026040318502', 'completed', 49.50, '2026-04-03 10:50:21', '2026-04-03 19:37:21', 0.00, NULL),
+(73, 20, 17, 'ORDSEED2026040316104', 'completed', 13.00, '2026-04-03 08:10:41', '2026-04-03 17:17:41', 0.00, NULL),
+(74, 16, 17, 'ORDSEED2026040315303', 'processing', 2.50, '2026-04-03 07:30:37', '2026-04-03 16:28:37', 0.00, NULL),
+(75, 16, 17, 'ORDSEED2026040313105', 'ready', 24.00, '2026-04-03 05:10:54', '2026-04-03 14:35:54', 0.00, NULL),
+(76, 20, 19, 'ORDSEED2026040309005', 'pending', 54.00, '2026-04-03 01:00:54', '2026-04-03 10:02:54', 0.00, NULL),
+(77, 16, 19, 'ORDSEED2026040318202', 'completed', 60.00, '2026-04-03 10:20:29', '2026-04-03 19:20:29', 0.00, NULL),
+(78, 20, 19, 'ORDSEED2026040419104', 'completed', 34.00, '2026-04-04 11:10:47', '2026-04-04 20:01:47', 0.00, NULL),
+(79, 21, 19, 'ORDSEED2026040411003', 'completed', 46.00, '2026-04-04 03:00:33', '2026-04-04 11:27:33', 0.00, NULL),
+(80, 21, 19, 'ORDSEED2026040415400', 'processing', 65.00, '2026-04-04 07:40:00', '2026-04-04 16:33:00', 0.00, NULL),
+(81, 21, 17, 'ORDSEED2026040414502', 'ready', 28.50, '2026-04-04 06:50:26', '2026-04-04 15:42:26', 0.00, NULL),
+(82, 20, 19, 'ORDSEED2026040411204', 'pending', 42.00, '2026-04-04 03:20:45', '2026-04-04 12:23:45', 0.00, NULL),
+(83, 20, 19, 'ORDSEED2026040415405', 'completed', 108.00, '2026-04-04 07:40:52', '2026-04-04 16:09:52', 0.00, NULL),
+(84, 20, 17, 'ORDSEED2026040509002', 'completed', 31.00, '2026-04-05 01:00:27', '2026-04-05 10:09:27', 0.00, NULL),
+(85, 20, 17, 'ORDSEED2026040509503', 'completed', 28.50, '2026-04-05 01:50:32', '2026-04-05 11:19:32', 0.00, NULL),
+(86, 20, 19, 'ORDSEED2026040520202', 'processing', 63.00, '2026-04-05 12:20:28', '2026-04-05 20:50:28', 0.00, NULL),
+(87, 16, 19, 'ORDSEED2026040518304', 'ready', 8.00, '2026-04-05 10:30:45', '2026-04-05 19:03:45', 0.00, NULL),
+(88, 20, 19, 'ORDSEED2026040517500', 'pending', 9.00, '2026-04-05 09:50:08', '2026-04-05 18:34:08', 0.00, NULL),
+(89, 21, 19, 'ORDSEED2026040512205', 'completed', 8.00, '2026-04-05 04:20:59', '2026-04-05 12:41:59', 0.00, NULL),
+(90, 21, 17, 'ORDSEED2026040619005', 'completed', 63.00, '2026-04-06 11:00:52', '2026-04-06 20:11:52', 0.00, NULL),
+(91, 21, 17, 'ORDSEED2026040614103', 'completed', 7.00, '2026-04-06 06:10:37', '2026-04-06 15:25:37', 0.00, NULL),
+(92, 21, 17, 'ORDSEED2026040613403', 'processing', 36.00, '2026-04-06 05:40:32', '2026-04-06 14:48:32', 0.00, NULL),
+(93, 20, 19, 'ORDSEED2026040619300', 'ready', 9.00, '2026-04-06 11:30:05', '2026-04-06 20:21:05', 0.00, NULL),
+(94, 21, 17, 'ORDSEED2026040615304', 'pending', 26.50, '2026-04-06 07:30:43', '2026-04-06 15:55:43', 0.00, NULL),
+(95, 20, 19, 'ORDSEED2026040613305', 'completed', 50.00, '2026-04-06 05:30:54', '2026-04-06 13:54:54', 0.00, NULL),
+(96, 16, 19, 'ORDSEED2026040716402', 'completed', 30.00, '2026-04-07 08:40:25', '2026-04-07 17:31:25', 0.00, NULL),
+(97, 20, 19, 'ORDSEED2026040718304', 'completed', 34.00, '2026-04-07 10:30:46', '2026-04-07 19:06:46', 0.00, NULL),
+(98, 21, 19, 'ORDSEED2026040714300', 'processing', 9.00, '2026-04-07 06:30:00', '2026-04-07 15:31:00', 0.00, NULL),
+(99, 20, 17, 'ORDSEED2026040720104', 'ready', 14.50, '2026-04-07 12:10:48', '2026-04-07 20:45:48', 0.00, NULL),
+(100, 21, 17, 'ORDSEED2026040714400', 'pending', 31.50, '2026-04-07 06:40:01', '2026-04-07 15:34:01', 0.00, NULL),
+(101, 20, 17, 'ORDSEED2026040709004', 'completed', 40.50, '2026-04-07 01:00:42', '2026-04-07 10:01:42', 0.00, NULL),
+(120, 16, 17, 'ORD20260405115432000', 'completed', 19.00, '2026-04-05 03:54:32', '2026-04-05 12:18:32', 0.00, NULL),
+(121, 20, 19, 'ORD20260405110228001', 'processing', 15.00, '2026-04-05 03:02:28', '2026-04-05 11:19:28', 0.00, NULL),
+(122, 16, 17, 'ORD20260405113414002', 'ready', 41.00, '2026-04-05 03:34:14', '2026-04-05 11:55:14', 0.00, NULL),
+(123, 16, 19, 'ORD20260405111053003', 'pending', 9.00, '2026-04-05 03:10:53', '2026-04-05 11:33:53', 0.00, NULL),
+(124, 20, 19, 'ORD20260405110643004', 'completed', 60.00, '2026-04-05 03:06:43', '2026-04-05 11:32:43', 0.00, NULL),
+(125, 21, 17, 'ORD20260405110725005', 'completed', 19.50, '2026-04-05 03:07:25', '2026-04-05 11:35:25', 0.00, NULL),
+(126, 20, 17, 'ORD20260405110500006', 'processing', 40.50, '2026-04-05 03:05:00', '2026-04-05 11:40:00', 0.00, NULL),
+(127, 16, 17, 'ORD20260405112152007', 'ready', 7.50, '2026-04-05 03:21:52', '2026-04-05 11:59:52', 0.00, NULL),
+(128, 16, 17, 'ORD20260405113606008', 'pending', 2.50, '2026-04-05 03:36:06', '2026-04-05 11:46:06', 0.00, NULL),
+(129, 21, 17, 'ORD20260405114040009', 'completed', 15.00, '2026-04-05 03:40:40', '2026-04-05 12:08:40', 0.00, NULL),
+(130, 21, 19, 'ORD20260405112718010', 'completed', 57.00, '2026-04-05 03:27:18', '2026-04-05 11:49:18', 0.00, NULL),
+(131, 21, 19, 'ORD20260405111510011', 'processing', 27.00, '2026-04-05 03:15:10', '2026-04-05 11:28:10', 0.00, NULL),
+(132, 21, 17, 'ORD20260405114726012', 'ready', 3.50, '2026-04-05 03:47:26', '2026-04-05 12:27:26', 0.00, NULL),
+(133, 21, 17, 'ORD20260405115557013', 'pending', 24.00, '2026-04-05 03:55:57', '2026-04-05 12:16:57', 0.00, NULL),
+(134, 20, 19, 'ORD20260405113545014', 'completed', 15.00, '2026-04-05 03:35:45', '2026-04-05 11:47:45', 0.00, NULL),
+(135, 21, 17, 'ORD20260405112852015', 'completed', 15.50, '2026-04-05 03:28:52', '2026-04-05 12:04:52', 0.00, NULL),
+(136, 20, 17, 'ORD20260405115949016', 'processing', 21.00, '2026-04-05 03:59:49', '2026-04-05 12:13:49', 0.00, NULL),
+(137, 21, 19, 'ORD20260405115417017', 'ready', 17.00, '2026-04-05 03:54:17', '2026-04-05 12:17:17', 0.00, NULL),
+(138, 21, 19, 'ORD20260405111807018', 'pending', 33.00, '2026-04-05 03:18:07', '2026-04-05 11:37:07', 0.00, NULL),
+(139, 16, 19, 'ORD20260405110334019', 'completed', 8.00, '2026-04-05 03:03:34', '2026-04-05 11:24:34', 0.00, NULL),
+(140, 16, 19, 'ORD20260405111110020', 'completed', 30.00, '2026-04-05 03:11:10', '2026-04-05 11:44:10', 0.00, NULL),
+(141, 21, 17, 'ORD20260405111711021', 'processing', 2.50, '2026-04-05 03:17:11', '2026-04-05 11:37:11', 0.00, NULL),
+(142, 16, 17, 'ORD20260405114750022', 'ready', 18.00, '2026-04-05 03:47:50', '2026-04-05 12:19:50', 0.00, NULL),
+(143, 20, 17, 'ORD20260405110053023', 'pending', 7.50, '2026-04-05 03:00:53', '2026-04-05 11:36:53', 0.00, NULL),
+(144, 16, 17, 'ORD20260405111053024', 'completed', 19.00, '2026-04-05 03:10:53', '2026-04-05 11:34:53', 0.00, NULL),
+(145, 16, 19, 'ORD20260405111158025', 'completed', 54.00, '2026-04-05 03:11:58', '2026-04-05 11:38:58', 0.00, NULL),
+(146, 16, 17, 'ORD20260405113703026', 'processing', 19.00, '2026-04-05 03:37:03', '2026-04-05 12:11:03', 0.00, NULL),
+(147, 16, 19, 'ORD20260405115926027', 'ready', 24.00, '2026-04-05 03:59:26', '2026-04-05 12:13:26', 0.00, NULL),
+(148, 16, 17, 'ORD20260405113309028', 'pending', 9.50, '2026-04-05 03:33:09', '2026-04-05 12:01:09', 0.00, NULL),
+(149, 16, 17, 'ORD20260405113552029', 'completed', 5.00, '2026-04-05 03:35:52', '2026-04-05 12:15:52', 0.00, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `order_items`
+--
+
+CREATE TABLE `order_items` (
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `menu_item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price_at_time` decimal(10,2) NOT NULL,
+  `customization` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`id`, `order_id`, `menu_item_id`, `quantity`, `price_at_time`, `customization`) VALUES
+(15, 12, 28, 10, 9.00, NULL),
+(16, 12, 29, 1, 8.00, NULL),
+(17, 13, 31, 1, 8.00, NULL),
+(18, 14, 29, 1, 8.00, NULL),
+(19, 15, 33, 1, 2.50, NULL),
+(20, 15, 36, 5, 12.00, 'No spicy'),
+(21, 16, 31, 1, 8.00, NULL),
+(22, 17, 28, 1, 9.00, NULL),
+(104, 60, 27, 2, 15.00, NULL),
+(105, 60, 25, 2, 15.00, NULL),
+(106, 61, 32, 2, 9.50, NULL),
+(107, 62, 27, 1, 15.00, NULL),
+(108, 63, 31, 2, 8.00, NULL),
+(109, 64, 29, 1, 8.00, NULL),
+(110, 64, 28, 1, 9.00, NULL),
+(111, 65, 25, 3, 15.00, NULL),
+(112, 66, 33, 1, 2.50, NULL),
+(113, 66, 32, 3, 9.50, NULL),
+(114, 66, 36, 3, 12.00, NULL),
+(115, 67, 27, 2, 15.00, NULL),
+(116, 67, 25, 1, 15.00, NULL),
+(117, 67, 29, 1, 8.00, NULL),
+(118, 68, 36, 2, 12.00, NULL),
+(119, 69, 34, 2, 3.50, NULL),
+(120, 70, 25, 3, 15.00, NULL),
+(121, 70, 29, 1, 8.00, NULL),
+(122, 70, 28, 2, 9.00, NULL),
+(123, 71, 32, 3, 9.50, NULL),
+(124, 72, 32, 3, 9.50, NULL),
+(125, 72, 31, 2, 8.00, NULL),
+(126, 72, 33, 2, 2.50, NULL),
+(127, 73, 33, 1, 2.50, NULL),
+(128, 73, 34, 3, 3.50, NULL),
+(129, 74, 33, 1, 2.50, NULL),
+(130, 75, 31, 3, 8.00, NULL),
+(131, 76, 27, 1, 15.00, NULL),
+(132, 76, 25, 1, 15.00, NULL),
+(133, 76, 29, 3, 8.00, NULL),
+(134, 77, 25, 2, 15.00, NULL),
+(135, 77, 27, 2, 15.00, NULL),
+(136, 78, 29, 2, 8.00, NULL),
+(137, 78, 28, 2, 9.00, NULL),
+(138, 79, 29, 2, 8.00, NULL),
+(139, 79, 25, 2, 15.00, NULL),
+(140, 80, 25, 2, 15.00, NULL),
+(141, 80, 29, 1, 8.00, NULL),
+(142, 80, 28, 3, 9.00, NULL),
+(143, 81, 32, 3, 9.50, NULL),
+(144, 82, 25, 1, 15.00, NULL),
+(145, 82, 28, 3, 9.00, NULL),
+(146, 83, 28, 2, 9.00, NULL),
+(147, 83, 27, 3, 15.00, NULL),
+(148, 83, 25, 3, 15.00, NULL),
+(149, 84, 34, 2, 3.50, NULL),
+(150, 84, 36, 2, 12.00, NULL),
+(151, 85, 32, 3, 9.50, NULL),
+(152, 86, 28, 2, 9.00, NULL),
+(153, 86, 25, 3, 15.00, NULL),
+(154, 87, 29, 1, 8.00, NULL),
+(155, 88, 28, 1, 9.00, NULL),
+(156, 89, 29, 1, 8.00, NULL),
+(157, 90, 32, 2, 9.50, NULL),
+(158, 90, 31, 1, 8.00, NULL),
+(159, 90, 36, 3, 12.00, NULL),
+(160, 91, 34, 2, 3.50, NULL),
+(161, 92, 32, 3, 9.50, NULL),
+(162, 92, 33, 3, 2.50, NULL),
+(163, 93, 28, 1, 9.00, NULL),
+(164, 94, 33, 1, 2.50, NULL),
+(165, 94, 31, 3, 8.00, NULL),
+(166, 95, 27, 1, 15.00, NULL),
+(167, 95, 29, 1, 8.00, NULL),
+(168, 95, 28, 3, 9.00, NULL),
+(169, 96, 25, 2, 15.00, NULL),
+(170, 97, 29, 2, 8.00, NULL),
+(171, 97, 28, 2, 9.00, NULL),
+(172, 98, 28, 1, 9.00, NULL),
+(173, 99, 33, 2, 2.50, NULL),
+(174, 99, 32, 1, 9.50, NULL),
+(175, 100, 33, 3, 2.50, NULL),
+(176, 100, 31, 3, 8.00, NULL),
+(177, 101, 36, 2, 12.00, NULL),
+(178, 101, 32, 1, 9.50, NULL),
+(179, 101, 34, 2, 3.50, NULL),
+(205, 120, 32, 2, 9.50, NULL),
+(206, 121, 25, 1, 15.00, NULL),
+(207, 122, 33, 2, 2.50, NULL),
+(208, 122, 36, 3, 12.00, NULL),
+(209, 123, 28, 1, 9.00, NULL),
+(210, 124, 25, 3, 15.00, NULL),
+(211, 124, 27, 1, 15.00, NULL),
+(212, 125, 31, 2, 8.00, NULL),
+(213, 125, 34, 1, 3.50, NULL),
+(214, 126, 32, 3, 9.50, NULL),
+(215, 126, 36, 1, 12.00, NULL),
+(216, 127, 33, 3, 2.50, NULL),
+(217, 128, 33, 1, 2.50, NULL),
+(218, 129, 34, 2, 3.50, NULL),
+(219, 129, 31, 1, 8.00, NULL),
+(220, 130, 25, 2, 15.00, NULL),
+(221, 130, 28, 3, 9.00, NULL),
+(222, 131, 28, 3, 9.00, NULL),
+(223, 132, 34, 1, 3.50, NULL),
+(224, 133, 36, 2, 12.00, NULL),
+(225, 134, 25, 1, 15.00, NULL),
+(226, 135, 33, 3, 2.50, NULL),
+(227, 135, 31, 1, 8.00, NULL),
+(228, 136, 31, 2, 8.00, NULL),
+(229, 136, 33, 2, 2.50, NULL),
+(230, 137, 29, 1, 8.00, NULL),
+(231, 137, 28, 1, 9.00, NULL),
+(232, 138, 28, 1, 9.00, NULL),
+(233, 138, 29, 3, 8.00, NULL),
+(234, 139, 29, 1, 8.00, NULL),
+(235, 140, 27, 2, 15.00, NULL),
+(236, 141, 33, 1, 2.50, NULL),
+(237, 142, 34, 3, 3.50, NULL),
+(238, 142, 33, 3, 2.50, NULL),
+(239, 143, 33, 3, 2.50, NULL),
+(240, 144, 36, 1, 12.00, NULL),
+(241, 144, 34, 2, 3.50, NULL),
+(242, 145, 29, 3, 8.00, NULL),
+(243, 145, 25, 2, 15.00, NULL),
+(244, 146, 32, 2, 9.50, NULL),
+(245, 147, 29, 3, 8.00, NULL),
+(246, 148, 34, 2, 3.50, NULL),
+(247, 148, 33, 1, 2.50, NULL),
+(248, 149, 33, 2, 2.50, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('student','admin','merchant') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `theme_preference` varchar(20) DEFAULT 'light'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `email`, `password`, `role`, `created_at`, `theme_preference`) VALUES
+(16, 'chen-wt@student.com', '$2y$10$jruwJ5Q5bTIib75MDl3z../s5k2oFM717ivdd27aw2e3hWPsqNt8S', 'student', '2025-08-06 06:19:42', 'light'),
+(17, 'TARUMTCanteen@merchant.com', '$2y$10$jruwJ5Q5bTIib75MDl3z../s5k2oFM717ivdd27aw2e3hWPsqNt8S', 'merchant', '2020-05-11 07:39:42', 'light'),
+(18, 'admin@admin.com', '$2y$10$jruwJ5Q5bTIib75MDl3z../s5k2oFM717ivdd27aw2e3hWPsqNt8S', 'admin', '2020-03-06 14:19:42', 'light'),
+(19, 'SchoolCafeteria@merchant.com', '$2y$10$jruwJ5Q5bTIib75MDl3z../s5k2oFM717ivdd27aw2e3hWPsqNt8S', 'merchant', '2025-07-09 14:22:22', 'light'),
+(20, 'low-zl@student.com', '$2y$10$/IQdkPzSVasLqD0TysImeuRxVolbwH317y9ZkjfZZRBCApBM.M.yy', 'student', '2026-03-17 05:06:34', 'light'),
+(21, 'tan-cy@student.com', '$2y$10$FnUNOT/2WyPouclkfYS1lOGqTtJej/E5zNtVE9.AuMHNSJPnPITjS', 'student', '2026-03-17 05:08:49', 'dark');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `cart_items`
+--
+ALTER TABLE `cart_items`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_cart_item` (`student_id`,`menu_item_id`),
+  ADD KEY `menu_item_id` (`menu_item_id`);
+
+--
+-- Indexes for table `discount_events`
+--
+ALTER TABLE `discount_events`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `job_applications`
+--
+ALTER TABLE `job_applications`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_application` (`student_id`,`job_id`),
+  ADD KEY `job_id` (`job_id`);
+
+--
+-- Indexes for table `job_postings`
+--
+ALTER TABLE `job_postings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `merchant_id` (`merchant_id`);
+
+--
+-- Indexes for table `job_shifts`
+--
+ALTER TABLE `job_shifts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `job_id` (`job_id`);
+
+--
+-- Indexes for table `menu_items`
+--
+ALTER TABLE `menu_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `merchant_id` (`merchant_id`);
+
+--
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_receiver_read` (`receiver_id`,`read_at`),
+  ADD KEY `idx_sender` (`sender_id`),
+  ADD KEY `idx_pair` (`sender_id`,`receiver_id`);
+
+--
+-- Indexes for table `orders`
+--
+ALTER TABLE `orders`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `order_number` (`order_number`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `merchant_id` (`merchant_id`);
+
+--
+-- Indexes for table `order_items`
+--
+ALTER TABLE `order_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `order_id` (`order_id`),
+  ADD KEY `menu_item_id` (`menu_item_id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `cart_items`
+--
+ALTER TABLE `cart_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+
+--
+-- AUTO_INCREMENT for table `discount_events`
+--
+ALTER TABLE `discount_events`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `job_applications`
+--
+ALTER TABLE `job_applications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `job_postings`
+--
+ALTER TABLE `job_postings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `job_shifts`
+--
+ALTER TABLE `job_shifts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+
+--
+-- AUTO_INCREMENT for table `menu_items`
+--
+ALTER TABLE `menu_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `orders`
+--
+ALTER TABLE `orders`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
+
+--
+-- AUTO_INCREMENT for table `order_items`
+--
+ALTER TABLE `order_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=249;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `cart_items`
+--
+ALTER TABLE `cart_items`
+  ADD CONSTRAINT `cart_items_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `cart_items_ibfk_2` FOREIGN KEY (`menu_item_id`) REFERENCES `menu_items` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `job_applications`
+--
+ALTER TABLE `job_applications`
+  ADD CONSTRAINT `job_applications_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `job_applications_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `job_postings` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `job_postings`
+--
+ALTER TABLE `job_postings`
+  ADD CONSTRAINT `job_postings_ibfk_1` FOREIGN KEY (`merchant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `job_shifts`
+--
+ALTER TABLE `job_shifts`
+  ADD CONSTRAINT `job_shifts_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `job_postings` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `menu_items`
+--
+ALTER TABLE `menu_items`
+  ADD CONSTRAINT `menu_items_ibfk_1` FOREIGN KEY (`merchant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`merchant_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `order_items`
+--
+ALTER TABLE `order_items`
+  ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`menu_item_id`) REFERENCES `menu_items` (`id`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
